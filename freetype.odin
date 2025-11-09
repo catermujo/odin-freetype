@@ -510,7 +510,7 @@ foreign lib {
 	done_face :: proc(face: Face) -> Error ---
 
 	@(link_name = "FT_Load_Char")
-	load_char :: proc(face: Face, char_code: c.ulong, load_flags: Load_Flags) -> Error ---
+	load_char :: proc(face: Face, char_code: c.ulong, load_flags: c.int) -> Error ---
 	@(link_name = "FT_Set_Char_Size")
 	set_char_size :: proc(face: Face, char_width, char_height: F26Dot6, horz_resolution, vert_resolution: c.uint) -> Error ---
 	@(link_name = "FT_Get_Char_Index")
