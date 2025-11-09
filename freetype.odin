@@ -426,7 +426,8 @@ Render_Mode :: enum {
 	Mono   = 2,
 	LCD    = 3,
 	LCD_V  = 4,
-	Max    = 5,
+  Sdf    = 5,
+	Max    = 6,
 }
 
 Size_Metrics :: struct {
