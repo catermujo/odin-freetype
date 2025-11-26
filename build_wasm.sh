@@ -32,4 +32,4 @@ emcmake cmake -S . -B build \
 
 emmake make -C build -j$CPU
 
-cp build/libfreetype.a ../libfreetype.wasm.a
+cp build/libfreetype.a ../freetype.wasm.a
