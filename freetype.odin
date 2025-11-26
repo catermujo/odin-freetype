@@ -4,8 +4,10 @@ import "core:c"
 
 when ODIN_OS == .Windows {
     foreign import lib "freetype.lib"
-} else {
+} else when ODIN_OS == .Darwin || ODIN_OS == .Linux {
     foreign import lib "system:freetype"
+} else when ODIN_ARCH == .wasm32 || ODIN_ARCH == .wasm64p32 {
+    foreign import lib "freetype.wasm.a"
 }
 
 Library :: distinct rawptr
@@ -495,41 +497,82 @@ Vector :: struct {
     x, y: Pos,
 }
 
-@(default_calling_convention = "c")
-foreign lib {
-    @(link_name = "FT_Init_FreeType")
-    init_free_type :: proc(library: ^Library) -> Error ---
-    @(link_name = "FT_Done_FreeType")
-    done_free_type :: proc(library: Library) -> Error ---
+when ODIN_ARCH == .wasm32 || ODIN_ARCH == .wasm64p32 {
+    @(default_calling_convention = "c")
+    foreign {
+        @(link_name = "FT_Init_FreeType")
+        init_free_type :: proc(library: ^Library) -> Error ---
+        @(link_name = "FT_Done_FreeType")
+        done_free_type :: proc(library: Library) -> Error ---
 
-    @(link_name = "FT_New_Face")
-    new_face :: proc(library: Library, file_path_name: cstring, face_index: c.long, face: ^Face) -> Error ---
-    @(link_name = "FT_New_Memory_Face")
-    new_memory_face :: proc(library: Library, file_base: ^byte, file_size, face_index: c.long, face: ^Face) -> Error ---
-    @(link_name = "FT_Done_Face")
-    done_face :: proc(face: Face) -> Error ---
+        @(link_name = "FT_New_Face")
+        new_face :: proc(library: Library, file_path_name: cstring, face_index: c.long, face: ^Face) -> Error ---
+        @(link_name = "FT_New_Memory_Face")
+        new_memory_face :: proc(library: Library, file_base: ^byte, file_size, face_index: c.long, face: ^Face) -> Error ---
+        @(link_name = "FT_Done_Face")
+        done_face :: proc(face: Face) -> Error ---
 
-    @(link_name = "FT_Load_Char")
-    load_char :: proc(face: Face, char_code: c.ulong, load_flags: c.int) -> Error ---
-    @(link_name = "FT_Set_Char_Size")
-    set_char_size :: proc(face: Face, char_width, char_height: F26Dot6, horz_resolution, vert_resolution: c.uint) -> Error ---
-    @(link_name = "FT_Get_Char_Index")
-    get_char_index :: proc(face: Face, code: c.ulong) -> c.uint ---
+        @(link_name = "FT_Load_Char")
+        load_char :: proc(face: Face, char_code: c.ulong, load_flags: c.int) -> Error ---
+        @(link_name = "FT_Set_Char_Size")
+        set_char_size :: proc(face: Face, char_width, char_height: F26Dot6, horz_resolution, vert_resolution: c.uint) -> Error ---
+        @(link_name = "FT_Get_Char_Index")
+        get_char_index :: proc(face: Face, code: c.ulong) -> c.uint ---
 
-    @(link_name = "FT_Load_Glyph")
-    load_glyph :: proc(face: Face, index: c.uint, flags: Load_Flags) -> Error ---
-    @(link_name = "FT_Render_Glyph")
-    render_glyph :: proc(slot: Glyph_Slot, render_mode: Render_Mode) -> Error ---
+        @(link_name = "FT_Load_Glyph")
+        load_glyph :: proc(face: Face, index: c.uint, flags: Load_Flags) -> Error ---
+        @(link_name = "FT_Render_Glyph")
+        render_glyph :: proc(slot: Glyph_Slot, render_mode: Render_Mode) -> Error ---
 
-    @(link_name = "FT_Set_Pixel_Sizes")
-    set_pixel_sizes :: proc(face: Face, pixel_width, pixel_height: u32) -> Error ---
-    @(link_name = "FT_Request_Size")
-    request_size :: proc(face: Face, req: Size_Request) -> Error ---
-    @(link_name = "FT_Select_Size")
-    select_size :: proc(face: Face, strike_index: i32) -> Error ---
+        @(link_name = "FT_Set_Pixel_Sizes")
+        set_pixel_sizes :: proc(face: Face, pixel_width, pixel_height: u32) -> Error ---
+        @(link_name = "FT_Request_Size")
+        request_size :: proc(face: Face, req: Size_Request) -> Error ---
+        @(link_name = "FT_Select_Size")
+        select_size :: proc(face: Face, strike_index: i32) -> Error ---
 
-    @(link_name = "FT_Set_Transform")
-    set_transform :: proc(face: Face, _matrix: ^Matrix, delta: ^Vector) ---
-    @(link_name = "FT_Get_Transform")
-    get_transform :: proc(face: Face, _matrix: ^Matrix, delta: ^Vector) ---
+        @(link_name = "FT_Set_Transform")
+        set_transform :: proc(face: Face, _matrix: ^Matrix, delta: ^Vector) ---
+        @(link_name = "FT_Get_Transform")
+        get_transform :: proc(face: Face, _matrix: ^Matrix, delta: ^Vector) ---
+    }
+} else {
+    @(default_calling_convention = "c")
+    foreign lib {
+        @(link_name = "FT_Init_FreeType")
+        init_free_type :: proc(library: ^Library) -> Error ---
+        @(link_name = "FT_Done_FreeType")
+        done_free_type :: proc(library: Library) -> Error ---
+
+        @(link_name = "FT_New_Face")
+        new_face :: proc(library: Library, file_path_name: cstring, face_index: c.long, face: ^Face) -> Error ---
+        @(link_name = "FT_New_Memory_Face")
+        new_memory_face :: proc(library: Library, file_base: ^byte, file_size, face_index: c.long, face: ^Face) -> Error ---
+        @(link_name = "FT_Done_Face")
+        done_face :: proc(face: Face) -> Error ---
+
+        @(link_name = "FT_Load_Char")
+        load_char :: proc(face: Face, char_code: c.ulong, load_flags: c.int) -> Error ---
+        @(link_name = "FT_Set_Char_Size")
+        set_char_size :: proc(face: Face, char_width, char_height: F26Dot6, horz_resolution, vert_resolution: c.uint) -> Error ---
+        @(link_name = "FT_Get_Char_Index")
+        get_char_index :: proc(face: Face, code: c.ulong) -> c.uint ---
+
+        @(link_name = "FT_Load_Glyph")
+        load_glyph :: proc(face: Face, index: c.uint, flags: Load_Flags) -> Error ---
+        @(link_name = "FT_Render_Glyph")
+        render_glyph :: proc(slot: Glyph_Slot, render_mode: Render_Mode) -> Error ---
+
+        @(link_name = "FT_Set_Pixel_Sizes")
+        set_pixel_sizes :: proc(face: Face, pixel_width, pixel_height: u32) -> Error ---
+        @(link_name = "FT_Request_Size")
+        request_size :: proc(face: Face, req: Size_Request) -> Error ---
+        @(link_name = "FT_Select_Size")
+        select_size :: proc(face: Face, strike_index: i32) -> Error ---
+
+        @(link_name = "FT_Set_Transform")
+        set_transform :: proc(face: Face, _matrix: ^Matrix, delta: ^Vector) ---
+        @(link_name = "FT_Get_Transform")
+        get_transform :: proc(face: Face, _matrix: ^Matrix, delta: ^Vector) ---
+    }
 }
