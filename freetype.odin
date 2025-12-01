@@ -7,7 +7,7 @@ when ODIN_OS == .Windows {
 } else when ODIN_OS == .Darwin || ODIN_OS == .Linux {
     foreign import lib "system:freetype"
 } else when ODIN_ARCH == .wasm32 || ODIN_ARCH == .wasm64p32 {
-    foreign import lib "freetype.wasm.a"
+    // foreign import lib "freetype.wasm.a"
 }
 
 Library :: distinct rawptr
@@ -499,7 +499,7 @@ Vector :: struct {
 
 when ODIN_ARCH == .wasm32 || ODIN_ARCH == .wasm64p32 {
     @(default_calling_convention = "c")
-    foreign {
+    foreign _ {
         @(link_name = "FT_Init_FreeType")
         init_free_type :: proc(library: ^Library) -> Error ---
         @(link_name = "FT_Done_FreeType")
@@ -576,3 +576,4 @@ when ODIN_ARCH == .wasm32 || ODIN_ARCH == .wasm64p32 {
         get_transform :: proc(face: Face, _matrix: ^Matrix, delta: ^Vector) ---
     }
 }
+
