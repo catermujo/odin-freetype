@@ -24,10 +24,11 @@ cd freetype
 
 # TODO: better flags
 emcmake cmake -S . -B build \
-        -DFT_DISABLE_ZLIB=FALSE \
-        -DFT_DISABLE_PNG=FALSE \
-        -DFT_DISABLE_HARFBUZZ=FALSE \
-        -DFT_REQUIRE_BROTLI=FALSE
+    -DFT_DISABLE_ZLIB=FALSE \
+    -DFT_DISABLE_PNG=FALSE \
+    -DFT_DISABLE_HARFBUZZ=FALSE \
+    -DFT_REQUIRE_BROTLI=FALSE \
+    -DCMAKE_BUILD_TYPE=Release
 # -DFT_DISABLE_BZIP2=FALSE \
 
 emmake make -C build -j$CPU

@@ -6,14 +6,23 @@ set -e
 
 echo "Building freetype.."
 cd freetype
-./autogen.sh
-./configure --with-zlib=no --with-bzip2=yes --with-png=yes --with-harfbuzz=yes --with-librsvg=yes --with-brotli=yes --enable-shared=no --enable-year2038
+cmake -S . -B build \
+    -DFT_DISABLE_ZLIB=FALSE \
+    -DFT_DISABLE_PNG=FALSE \
+    -DFT_DISABLE_HARFBUZZ=FALSE \
+    -DFT_REQUIRE_BROTLI=FALSE \
+    -DBUILD_SHARED_LIBS=ON \
+    -DCMAKE_BUILD_TYPE=Release
+
+# -DFT_DISABLE_BZIP2=FALSE \
+
+make -C build -j$CPU
 if [ $(uname -s) = 'Darwin' ]; then
     make -j$(sysctl -n hw.ncpu)
-    LIB_EXT=darwin
+    LIB_EXT=dylib
 else
     make -j$(nproc)
-    LIB_EXT=linux
+    LIB_EXT=so
 fi
 
-cp objs/.libs/libfreetype.a ../freetype.$LIB_EXT.a
+cp build/*.$LIB_EXT ../

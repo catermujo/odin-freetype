@@ -3,10 +3,38 @@ package freetype
 import "core:c"
 
 when ODIN_OS == .Windows {
-    foreign import lib "freetype.lib"
-} else when ODIN_OS == .Darwin || ODIN_OS == .Linux {
-    foreign import lib "system:freetype"
+    SYSTEM_SUPPORT :: false
+    FT_LINK :: #config(FT_LINK, "shared")
+
+    when FT_LINK == "shared" {
+        foreign import lib "freetype.lib"
+    } else when FT_LINK == "static" {
+        foreign import lib "freetype_static.lib"
+    }
+} else when ODIN_OS == .Darwin {
+    SYSTEM_SUPPORT :: true
+    FT_LINK :: #config(FT_LINK, "system")
+
+    when FT_LINK == "static" {
+        foreign import lib "freetype.darwin.a"
+    } else when FT_LINK == "shared" {
+        foreign import lib "libfreetyped.dylib"
+    } else {
+        foreign import lib "system:freetype"
+    }
+} else when ODIN_OS == .Linux {
+    SYSTEM_SUPPORT :: true
+    FT_LINK :: #config(FT_LINK, "system")
+
+    when FT_LINK == "static" {
+        foreign import lib "freetype.linux.a"
+    } else when FT_LINK == "shared" {
+        foreign import lib "libfreetyped.so"
+    } else {
+        foreign import lib "system:freetype"
+    }
 } else when ODIN_ARCH == .wasm32 || ODIN_ARCH == .wasm64p32 {
+    SYSTEM_SUPPORT :: false
     // foreign import lib "freetype.wasm.a"
 }
 
