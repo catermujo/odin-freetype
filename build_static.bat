@@ -11,7 +11,7 @@ if not exist %vendor_dir%\NUL (
 pushd %vendor_dir%
 
 echo Configuring build...
-cmake -S . -B build -DFT_DISABLE_ZLIB=FALSE -DFT_DISABLE_PNG=FALSE -DFT_DISABLE_HARFBUZZ=FALSE -DFT_REQUIRE_BROTLI=FALSE -DCMAKE_BUILD_TYPE=Release
+cmake -S . -B build -DFT_DISABLE_ZLIB=TRUE -DFT_DISABLE_PNG=TRUE -DFT_DISABLE_HARFBUZZ=TRUE -DFT_DISABLE_ZLIB=TRUE -DFT_DISABLE_BROTLI=TRUE -DFT_DISABLE_GZIP=TRUE -DCMAKE_BUILD_TYPE=Release
 REM make setup visualc
 
 echo Building project...
