@@ -450,7 +450,7 @@ Parameter :: struct {
     data: rawptr,
 }
 
-Render_Mode :: enum {
+Render_Mode :: enum u8 {
     Normal = 0,
     Light  = 1,
     Mono   = 2,
@@ -458,6 +458,14 @@ Render_Mode :: enum {
     LCD_V  = 4,
     Sdf    = 5,
     Max    = 6,
+}
+
+Lcd_Filter :: enum c.int {
+    None    = 0,
+    Default = 1,
+    Light   = 2,
+    Legacy1 = 3,
+    Legacy  = 16,
 }
 
 Size_Metrics :: struct {
@@ -563,6 +571,9 @@ when ODIN_ARCH == .wasm32 || ODIN_ARCH == .wasm64p32 {
         set_transform :: proc(face: Face, _matrix: ^Matrix, delta: ^Vector) ---
         @(link_name = "FT_Get_Transform")
         get_transform :: proc(face: Face, _matrix: ^Matrix, delta: ^Vector) ---
+
+        @(link_name = "FT_Library_SetLcdFilter")
+        library_set_lcd_filter :: proc(library: Library, filter: Lcd_Filter) -> Error ---
     }
 } else {
     @(default_calling_convention = "c")
@@ -602,6 +613,9 @@ when ODIN_ARCH == .wasm32 || ODIN_ARCH == .wasm64p32 {
         set_transform :: proc(face: Face, _matrix: ^Matrix, delta: ^Vector) ---
         @(link_name = "FT_Get_Transform")
         get_transform :: proc(face: Face, _matrix: ^Matrix, delta: ^Vector) ---
+
+        @(link_name = "FT_Library_SetLcdFilter")
+        library_set_lcd_filter :: proc(library: Library, filter: Lcd_Filter) -> Error ---
     }
 }
 
