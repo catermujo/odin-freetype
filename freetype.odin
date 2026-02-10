@@ -618,4 +618,3 @@ when ODIN_ARCH == .wasm32 || ODIN_ARCH == .wasm64p32 {
         library_set_lcd_filter :: proc(library: Library, filter: Lcd_Filter) -> Error ---
     }
 }
-
