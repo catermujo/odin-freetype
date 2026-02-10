@@ -5,7 +5,7 @@ setlocal EnableDelayedExpansion
 set vendor_dir=freetype
 set binaries_dir=build\Release
 
-if not exist %vendor_dir%\NUL (
+if not exist %vendor_dir% (
     git clone --recurse-submodules https://github.com/freetype/freetype --depth=1 %vendor_dir%
 )
 pushd %vendor_dir%

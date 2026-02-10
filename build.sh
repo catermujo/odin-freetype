@@ -16,13 +16,13 @@ cmake -S . -B build \
 
 # -DFT_DISABLE_BZIP2=FALSE \
 
-make -C build -j$CPU
 if [ $(uname -s) = 'Darwin' ]; then
-    make -j$(sysctl -n hw.ncpu)
+    CPU=$(sysctl -n hw.ncpu)
     LIB_EXT=dylib
 else
-    make -j$(nproc)
+    CPU=$(nproc)
     LIB_EXT=so
 fi
+make -C build -j$CPU
 
 cp build/*.$LIB_EXT ../
