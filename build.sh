@@ -2,7 +2,7 @@
 
 set -e
 
-[ -d freetype ] || git clone --recurse-submodules https://github.com/freetype/freetype --depth=1
+[ -d freetype ] || git clone --recurse-submodules --revision 23b6cd27ff19b70cbf98e058cd2cf0647d5284ff https://github.com/freetype/freetype --depth=1
 
 echo "Building freetype.."
 cd freetype
