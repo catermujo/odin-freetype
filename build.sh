@@ -25,4 +25,10 @@ else
 fi
 make -C build -j$CPU
 
-cp build/*.$LIB_EXT ../
+if [ $(uname -s) = 'Darwin' ]; then
+    # DUMBAI: Stage only ABI-major FreeType dylibs to avoid duplicate unversioned and patch-level alias files in vendor output.
+    cp build/libfreetyped.6.dylib ../
+    cp build/libfreetype.6.dylib ../
+else
+    cp build/*.$LIB_EXT ../
+fi

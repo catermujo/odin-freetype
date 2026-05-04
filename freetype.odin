@@ -18,7 +18,8 @@ when ODIN_OS == .Windows {
     when LINK == "static" {
         foreign import lib "freetype.darwin.a"
     } else when LINK == "shared" {
-        foreign import lib "libfreetyped.dylib"
+        // DUMBAI: Pin Darwin shared import to ABI-major install-name so vendor output can drop duplicate alias filenames.
+        foreign import lib "libfreetyped.6.dylib"
     } else {
         foreign import lib "system:freetype"
     }
@@ -618,4 +619,3 @@ when ODIN_ARCH == .wasm32 || ODIN_ARCH == .wasm64p32 {
         library_set_lcd_filter :: proc(library: Library, filter: Lcd_Filter) -> Error ---
     }
 }
-
