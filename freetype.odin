@@ -183,6 +183,11 @@ Face_Done_Func :: #type proc "c" (face: Face)
 Face_Get_Advances_Func :: #type proc "c" (face: Face, first, count: c.uint, flags: i32, advances: ^Fixed) -> Error
 Face_Get_Kerning_Func :: #type proc "c" (face: Face, left_glyph, right_glyph: c.uint, kerning: ^Vector) -> Error
 
+Outline_MoveTo_Func :: #type proc "c" (to: ^Vector, user: rawptr) -> c.int
+Outline_LineTo_Func :: #type proc "c" (to: ^Vector, user: rawptr) -> c.int
+Outline_ConicTo_Func :: #type proc "c" (control, to: ^Vector, user: rawptr) -> c.int
+Outline_CubicTo_Func :: #type proc "c" (control1, control2, to: ^Vector, user: rawptr) -> c.int
+
 Module_Constructor :: #type proc "c" (module: Module) -> Error
 Module_Destructor :: #type proc "c" (module: Module)
 Module_Requester :: #type proc "c" (module: Module, name: cstring) -> rawptr
@@ -446,6 +451,15 @@ Outline :: struct {
     flags:      c.int,
 }
 
+Outline_Funcs :: struct {
+    move_to:   Outline_MoveTo_Func,
+    line_to:   Outline_LineTo_Func,
+    conic_to:  Outline_ConicTo_Func,
+    cubic_to:  Outline_CubicTo_Func,
+    shift:     c.int,
+    delta:     Pos,
+}
+
 Parameter :: struct {
     tag:  c.ulong,
     data: rawptr,
@@ -554,11 +568,12 @@ foreign lib {
     set_char_size :: proc(face: Face, char_width, char_height: F26Dot6, horz_resolution, vert_resolution: c.uint) -> Error ---
     @(link_name = "FT_Get_Char_Index")
     get_char_index :: proc(face: Face, code: c.ulong) -> c.uint ---
-
     @(link_name = "FT_Load_Glyph")
     load_glyph :: proc(face: Face, index: c.uint, flags: Load_Flags) -> Error ---
     @(link_name = "FT_Render_Glyph")
     render_glyph :: proc(slot: Glyph_Slot, render_mode: Render_Mode) -> Error ---
+    @(link_name = "FT_Outline_Decompose")
+    outline_decompose :: proc(outline: ^Outline, funcs: ^Outline_Funcs, user: rawptr) -> Error ---
 
     @(link_name = "FT_Set_Pixel_Sizes")
     set_pixel_sizes :: proc(face: Face, pixel_width, pixel_height: u32) -> Error ---
