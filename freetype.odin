@@ -25,12 +25,24 @@ when ODIN_OS == .Windows {
     }
 } else when ODIN_OS == .Linux {
     SYSTEM_SUPPORT :: true
-    LINK :: #config(LINK, "system")
+    LINK :: #config(FT_LINK, "system")
 
     when LINK == "static" {
-        foreign import lib "freetype.linux.a"
+        when ODIN_ARCH == .amd64 {
+            foreign import lib "linux_x64/freetype.linux.a"
+        } else when ODIN_ARCH == .arm64 {
+            foreign import lib "linux_arm64/freetype.linux.a"
+        } else {
+            #panic("vendor/ft static link supports only linux amd64/arm64")
+        }
     } else when LINK == "shared" {
-        foreign import lib "libfreetyped.so"
+        when ODIN_ARCH == .amd64 {
+            foreign import lib "linux_x64/libfreetyped.so"
+        } else when ODIN_ARCH == .arm64 {
+            foreign import lib "linux_arm64/libfreetyped.so"
+        } else {
+            #panic("vendor/ft shared link supports only linux amd64/arm64")
+        }
     } else {
         foreign import lib "system:freetype"
     }
@@ -452,12 +464,12 @@ Outline :: struct {
 }
 
 Outline_Funcs :: struct {
-    move_to:   Outline_MoveTo_Func,
-    line_to:   Outline_LineTo_Func,
-    conic_to:  Outline_ConicTo_Func,
-    cubic_to:  Outline_CubicTo_Func,
-    shift:     c.int,
-    delta:     Pos,
+    move_to:  Outline_MoveTo_Func,
+    line_to:  Outline_LineTo_Func,
+    conic_to: Outline_ConicTo_Func,
+    cubic_to: Outline_CubicTo_Func,
+    shift:    c.int,
+    delta:    Pos,
 }
 
 Parameter :: struct {

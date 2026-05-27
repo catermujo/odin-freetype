@@ -20,6 +20,14 @@ clone_at_revision() {
 
 clone_at_revision freetype 23b6cd27ff19b70cbf98e058cd2cf0647d5284ff https://github.com/freetype/freetype --recurse-submodules --depth=1
 
+linux_arch_dir() {
+    case "$(uname -m)" in
+        x86_64 | amd64) echo "linux_x64" ;;
+        aarch64 | arm64) echo "linux_arm64" ;;
+        *) echo "linux_$(uname -m)" ;;
+    esac
+}
+
 echo "Building freetype.."
 cd freetype
 ./autogen.sh
@@ -30,7 +38,7 @@ if [ $(uname -s) = 'Darwin' ]; then
     LIB_EXT=darwin
 else
     CPU=$(nproc)
-    LIB_EXT=linux
+    ARCH_DIR=$(linux_arch_dir)
 fi
 # cmake -S . -B build \
 #     -DFT_REQUIRE_ZLIB=TRUE \
@@ -46,4 +54,9 @@ fi
 
 make -j$CPU
 
-cp objs/.libs/libfreetype.a ../freetype.$LIB_EXT.a
+if [ $(uname -s) = 'Darwin' ]; then
+    cp objs/.libs/libfreetype.a ../freetype.$LIB_EXT.a
+else
+    mkdir -p "../$ARCH_DIR"
+    cp objs/.libs/libfreetype.a "../$ARCH_DIR/freetype.linux.a"
+fi

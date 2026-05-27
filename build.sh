@@ -20,6 +20,14 @@ clone_at_revision() {
 
 clone_at_revision freetype 23b6cd27ff19b70cbf98e058cd2cf0647d5284ff https://github.com/freetype/freetype --recurse-submodules --depth=1
 
+linux_arch_dir() {
+    case "$(uname -m)" in
+        x86_64 | amd64) echo "linux_x64" ;;
+        aarch64 | arm64) echo "linux_arm64" ;;
+        *) echo "linux_$(uname -m)" ;;
+    esac
+}
+
 echo "Building freetype.."
 cd freetype
 cmake -S . -B build \
@@ -46,5 +54,7 @@ if [ $(uname -s) = 'Darwin' ]; then
     cp build/libfreetyped.6.dylib ../
     cp build/libfreetype.6.dylib ../
 else
-    cp build/*.$LIB_EXT ../
+    ARCH_DIR=$(linux_arch_dir)
+    mkdir -p "../$ARCH_DIR"
+    cp build/*.$LIB_EXT "../$ARCH_DIR"/
 fi
