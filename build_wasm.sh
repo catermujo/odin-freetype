@@ -17,7 +17,23 @@ fi
 
 # cd ..
 
-[ -d freetype ] || git clone --recurse-submodules --revision 23b6cd27ff19b70cbf98e058cd2cf0647d5284ff https://github.com/freetype/freetype --depth=1
+clone_at_revision() {
+    local dir="$1"
+    local revision="$2"
+    local remote="$3"
+    shift 3
+    [ -d "$dir" ] && return
+    git clone "$@" "$remote" "$dir"
+    if ! git -C "$dir" checkout --detach "$revision"; then
+        git -C "$dir" fetch origin "$revision"
+        git -C "$dir" checkout --detach FETCH_HEAD
+    fi
+    if [ -f "$dir/.gitmodules" ]; then
+        git -C "$dir" submodule update --init --recursive
+    fi
+}
+
+clone_at_revision freetype 23b6cd27ff19b70cbf98e058cd2cf0647d5284ff https://github.com/freetype/freetype --recurse-submodules --depth=1
 
 cd freetype
 # -DBROTLIDEC_LIBRARIES="../brotli/build/libbrotlidec.a" \
