@@ -28,6 +28,22 @@ linux_arch_dir() {
     esac
 }
 
+copy_shared_family() {
+    local src_dir="$1"
+    local lib_base="$2"
+    local dst_dir="$3"
+    local src
+    local copied=0
+    for src in "$src_dir"/"$lib_base".so*; do
+        [ -e "$src" ] || continue
+        cp -a "$src" "$dst_dir"/
+        copied=1
+    done
+    if [ "$copied" -eq 0 ]; then
+        echo "WARN: no files matched $src_dir/$lib_base.so*"
+    fi
+}
+
 echo "Building freetype.."
 cd freetype
 cmake -S . -B build \
@@ -56,5 +72,5 @@ if [ $(uname -s) = 'Darwin' ]; then
 else
     ARCH_DIR=$(linux_arch_dir)
     mkdir -p "../$ARCH_DIR"
-    cp build/*.$LIB_EXT "../$ARCH_DIR"/
+    copy_shared_family build libfreetype "../$ARCH_DIR"
 fi
