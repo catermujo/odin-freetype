@@ -37,9 +37,9 @@ when ODIN_OS == .Windows {
         }
     } else when LINK == "shared" {
         when ODIN_ARCH == .amd64 {
-            foreign import lib "linux_x64/libfreetyped.so"
+            foreign import lib "linux_x64/libfreetype.so"
         } else when ODIN_ARCH == .arm64 {
-            foreign import lib "linux_arm64/libfreetyped.so"
+            foreign import lib "linux_arm64/libfreetype.so"
         } else {
             #panic("vendor/ft shared link supports only linux amd64/arm64")
         }
