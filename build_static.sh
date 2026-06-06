@@ -28,12 +28,22 @@ linux_arch_dir() {
     esac
 }
 
+darwin_arch_dir() {
+    case "$(uname -m)" in
+        x86_64 | amd64) echo "darwin_x64" ;;
+        aarch64 | arm64) echo "darwin_arm64" ;;
+        *) echo "darwin_$(uname -m)" ;;
+    esac
+}
+
 echo "Building freetype.."
 cd freetype
 ./autogen.sh
 ./configure --enable-shared=no --enable-year2038 --without-png --without-harfbuzz --without-bzip2 --without-brotli --without-gzip --with-zlib=no #--with-png=yes --with-harfbuzz=yes --with-librsvg=yes --with-brotli=yes # --with-bzip2=no
 
 if [ $(uname -s) = 'Darwin' ]; then
+    ARCH_DIR=$(darwin_arch_dir)
+    mkdir -p "../$ARCH_DIR"
     CPU=$(sysctl -n hw.ncpu)
     LIB_EXT=darwin
 else
@@ -55,7 +65,7 @@ fi
 make -j$CPU
 
 if [ $(uname -s) = 'Darwin' ]; then
-    cp objs/.libs/libfreetype.a ../freetype.$LIB_EXT.a
+    cp objs/.libs/libfreetype.a "../$ARCH_DIR/freetype.$LIB_EXT.a"
 else
     mkdir -p "../$ARCH_DIR"
     cp objs/.libs/libfreetype.a "../$ARCH_DIR/freetype.linux.a"

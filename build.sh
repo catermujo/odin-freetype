@@ -28,6 +28,14 @@ linux_arch_dir() {
     esac
 }
 
+darwin_arch_dir() {
+    case "$(uname -m)" in
+        x86_64 | amd64) echo "darwin_x64" ;;
+        aarch64 | arm64) echo "darwin_arm64" ;;
+        *) echo "darwin_$(uname -m)" ;;
+    esac
+}
+
 copy_shared_family() {
     local src_dir="$1"
     local lib_base="$2"
@@ -57,6 +65,8 @@ cmake -S . -B build \
 # -DFT_DISABLE_BZIP2=FALSE \
 
 if [ $(uname -s) = 'Darwin' ]; then
+    ARCH_DIR=$(darwin_arch_dir)
+    mkdir -p "../$ARCH_DIR"
     CPU=$(sysctl -n hw.ncpu)
     LIB_EXT=dylib
 else
@@ -67,8 +77,8 @@ make -C build -j$CPU
 
 if [ $(uname -s) = 'Darwin' ]; then
     # DUMBAI: Stage only ABI-major FreeType dylibs to avoid duplicate unversioned and patch-level alias files in vendor output.
-    cp build/libfreetyped.6.dylib ../
-    cp build/libfreetype.6.dylib ../
+    cp build/libfreetyped.6.dylib "../$ARCH_DIR/"
+    cp build/libfreetype.6.dylib "../$ARCH_DIR/"
 else
     ARCH_DIR=$(linux_arch_dir)
     mkdir -p "../$ARCH_DIR"

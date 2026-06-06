@@ -6,22 +6,45 @@ when ODIN_OS == .Windows {
     SYSTEM_SUPPORT :: false
     LINK :: #config(FT_LINK, "shared")
 
-    when LINK == "shared" {
-        foreign import lib "freetype.lib"
-    } else when LINK == "static" {
-        foreign import lib "freetype_static.lib"
+    when ODIN_ARCH == .amd64 {
+        when LINK == "shared" {
+            foreign import lib "windows_x64/freetype.lib"
+        } else when LINK == "static" {
+            foreign import lib "windows_x64/freetype_static.lib"
+        }
+    } else when ODIN_ARCH == .arm64 {
+        when LINK == "shared" {
+            foreign import lib "windows_arm64/freetype.lib"
+        } else when LINK == "static" {
+            foreign import lib "windows_arm64/freetype_static.lib"
+        }
+    } else {
+        #panic("vendor/ft supports windows amd64/arm64 only")
     }
 } else when ODIN_OS == .Darwin {
     SYSTEM_SUPPORT :: true
     LINK :: #config(FT_LINK, "system")
 
-    when LINK == "static" {
-        foreign import lib "freetype.darwin.a"
-    } else when LINK == "shared" {
-        // DUMBAI: Pin Darwin shared import to ABI-major install-name so vendor output can drop duplicate alias filenames.
-        foreign import lib "libfreetyped.6.dylib"
+    when ODIN_ARCH == .amd64 {
+        when LINK == "static" {
+            foreign import lib "darwin_x64/freetype.darwin.a"
+        } else when LINK == "shared" {
+            // DUMBAI: Pin Darwin shared import to ABI-major install-name so vendor output can drop duplicate alias filenames.
+            foreign import lib "darwin_x64/libfreetyped.6.dylib"
+        } else {
+            foreign import lib "system:freetype"
+        }
+    } else when ODIN_ARCH == .arm64 {
+        when LINK == "static" {
+            foreign import lib "darwin_arm64/freetype.darwin.a"
+        } else when LINK == "shared" {
+            // DUMBAI: Pin Darwin shared import to ABI-major install-name so vendor output can drop duplicate alias filenames.
+            foreign import lib "darwin_arm64/libfreetyped.6.dylib"
+        } else {
+            foreign import lib "system:freetype"
+        }
     } else {
-        foreign import lib "system:freetype"
+        #panic("vendor/ft supports Darwin amd64/arm64 only")
     }
 } else when ODIN_OS == .Linux {
     SYSTEM_SUPPORT :: true
