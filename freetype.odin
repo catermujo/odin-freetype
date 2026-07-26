@@ -8,15 +8,15 @@ when ODIN_OS == .Windows {
 
     when ODIN_ARCH == .amd64 {
         when LINK == "shared" {
-            foreign import lib "windows_x64/freetype.lib"
+            @(require) foreign import lib "windows_x64/freetype.lib"
         } else when LINK == "static" {
-            foreign import lib "windows_x64/freetype_static.lib"
+            @(require) foreign import lib "windows_x64/freetype_static.lib"
         }
     } else when ODIN_ARCH == .arm64 {
         when LINK == "shared" {
-            foreign import lib "windows_arm64/freetype.lib"
+            @(require) foreign import lib "windows_arm64/freetype.lib"
         } else when LINK == "static" {
-            foreign import lib "windows_arm64/freetype_static.lib"
+            @(require) foreign import lib "windows_arm64/freetype_static.lib"
         }
     } else {
         #panic("vendor/ft supports windows amd64/arm64 only")
@@ -27,19 +27,19 @@ when ODIN_OS == .Windows {
 
     when ODIN_ARCH == .amd64 {
         when LINK == "static" {
-            foreign import lib "darwin_x64/freetype.darwin.a"
+            @(require) foreign import lib "darwin_x64/freetype.darwin.a"
         } else when LINK == "shared" {
             // DUMBAI: Pin Darwin shared import to ABI-major install-name so vendor output can drop duplicate alias filenames.
-            foreign import lib "darwin_x64/libfreetyped.6.dylib"
+            @(require) foreign import lib "darwin_x64/libfreetyped.6.dylib"
         } else {
             foreign import lib "system:freetype"
         }
     } else when ODIN_ARCH == .arm64 {
         when LINK == "static" {
-            foreign import lib "darwin_arm64/freetype.darwin.a"
+            @(require) foreign import lib "darwin_arm64/freetype.darwin.a"
         } else when LINK == "shared" {
             // DUMBAI: Pin Darwin shared import to ABI-major install-name so vendor output can drop duplicate alias filenames.
-            foreign import lib "darwin_arm64/libfreetyped.6.dylib"
+            @(require) foreign import lib "darwin_arm64/libfreetyped.6.dylib"
         } else {
             foreign import lib "system:freetype"
         }
@@ -52,25 +52,25 @@ when ODIN_OS == .Windows {
 
     when LINK == "static" {
         when ODIN_ARCH == .amd64 {
-            foreign import lib "linux_x64/freetype.linux.a"
+            @(require) foreign import lib "linux_x64/freetype.linux.a"
         } else when ODIN_ARCH == .arm64 {
-            foreign import lib "linux_arm64/freetype.linux.a"
+            @(require) foreign import lib "linux_arm64/freetype.linux.a"
         } else {
             #panic("vendor/ft static link supports only linux amd64/arm64")
         }
     } else when LINK == "shared" {
         when ODIN_ARCH == .amd64 {
-            foreign import lib "linux_x64/libfreetype.so"
+            @(require) foreign import lib "linux_x64/libfreetype.so"
         } else when ODIN_ARCH == .arm64 {
-            foreign import lib "linux_arm64/libfreetype.so"
+            @(require) foreign import lib "linux_arm64/libfreetype.so"
         } else {
             #panic("vendor/ft shared link supports only linux amd64/arm64")
         }
     } else {
-        foreign import lib "system:freetype"
+        @(require) foreign import lib "system:freetype"
     }
 } else when ODIN_ARCH == .wasm32 || ODIN_ARCH == .wasm64p32 {
-    foreign import lib "freetype.wasm.a"
+    @(require) foreign import lib "freetype.wasm.a"
     SYSTEM_SUPPORT :: false
 }
 
