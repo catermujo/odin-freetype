@@ -589,6 +589,12 @@ foreign lib {
     init_free_type :: proc(library: ^Library) -> Error ---
     @(link_name = "FT_Done_FreeType")
     done_free_type :: proc(library: Library) -> Error ---
+    @(link_name = "FT_New_Library")
+    new_library :: proc(memory: Memory, library: ^Library) -> Error ---
+    @(link_name = "FT_Done_Library")
+    done_library :: proc(library: Library) -> Error ---
+    @(link_name = "FT_Add_Default_Modules")
+    add_default_modules :: proc(library: Library) ---
 
     @(link_name = "FT_New_Face")
     new_face :: proc(library: Library, file_path_name: cstring, face_index: c.long, face: ^Face) -> Error ---
