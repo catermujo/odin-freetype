@@ -500,7 +500,7 @@ Parameter :: struct {
     data: rawptr,
 }
 
-Render_Mode :: enum u8 {
+Render_Mode :: enum c.int {
     Normal = 0,
     Light  = 1,
     Mono   = 2,
