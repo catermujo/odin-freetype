@@ -54,7 +54,18 @@ copy_shared_family() {
 
 echo "Building freetype.."
 cd freetype
+PLATFORM_OPTIONS=()
+if [ "$(uname -s)" = 'Darwin' ]; then
+    SDK_ROOT=$(xcrun --sdk macosx --show-sdk-path)
+    PLATFORM_OPTIONS=(
+        -DFT_DISABLE_BROTLI=TRUE
+        "-DCMAKE_OSX_DEPLOYMENT_TARGET=${MACOSX_DEPLOYMENT_TARGET:-12.0}"
+        "-DZLIB_LIBRARY=$SDK_ROOT/usr/lib/libz.tbd"
+        "-DZLIB_INCLUDE_DIR=$SDK_ROOT/usr/include"
+    )
+fi
 cmake -S . -B build \
+    "${PLATFORM_OPTIONS[@]}" \
     -DFT_DISABLE_ZLIB=FALSE \
     -DFT_DISABLE_PNG=FALSE \
     -DFT_DISABLE_HARFBUZZ=FALSE \
@@ -77,8 +88,8 @@ make -C build -j$CPU
 
 if [ $(uname -s) = 'Darwin' ]; then
     # DUMBAI: Stage only ABI-major FreeType dylibs to avoid duplicate unversioned and patch-level alias files in vendor output.
-    cp build/libfreetyped.6.dylib "../$ARCH_DIR/"
     cp build/libfreetype.6.dylib "../$ARCH_DIR/"
+    rm -f "../$ARCH_DIR/libfreetyped.6.dylib"
 else
     ARCH_DIR=$(linux_arch_dir)
     mkdir -p "../$ARCH_DIR"
