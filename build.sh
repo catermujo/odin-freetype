@@ -87,7 +87,7 @@ fi
 make -C build -j$CPU
 
 if [ $(uname -s) = 'Darwin' ]; then
-    # DUMBAI: Stage only ABI-major FreeType dylibs to avoid duplicate unversioned and patch-level alias files in vendor output.
+    # Stage only ABI-major FreeType dylibs to avoid duplicate unversioned and patch-level alias files in vendor output.
     cp build/libfreetype.6.dylib "../$ARCH_DIR/"
     rm -f "../$ARCH_DIR/libfreetyped.6.dylib"
 else

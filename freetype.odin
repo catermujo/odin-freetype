@@ -29,7 +29,7 @@ when ODIN_OS == .Windows {
         when LINK == "static" {
             @(require) foreign import lib "darwin_x64/freetype.darwin.a"
         } else when LINK == "shared" {
-            // DUMBAI: Pin Darwin shared import to ABI-major install-name so vendor output can drop duplicate alias filenames.
+            // Pin Darwin shared import to ABI-major install-name so vendor output can drop duplicate alias filenames.
             @(require) foreign import lib "darwin_x64/libfreetype.6.dylib"
         } else {
             foreign import lib "system:freetype"
@@ -38,7 +38,7 @@ when ODIN_OS == .Windows {
         when LINK == "static" {
             @(require) foreign import lib "darwin_arm64/freetype.darwin.a"
         } else when LINK == "shared" {
-            // DUMBAI: Pin Darwin shared import to ABI-major install-name so vendor output can drop duplicate alias filenames.
+            // Pin Darwin shared import to ABI-major install-name so vendor output can drop duplicate alias filenames.
             @(require) foreign import lib "darwin_arm64/libfreetype.6.dylib"
         } else {
             foreign import lib "system:freetype"
